@@ -21,14 +21,17 @@ int getMacAddr(char* name, char* mac) {
 
     struct ifaddrs* ifap;
     for (ifap = ifaphead; ifap; ifap = ifap->ifa_next) {
-        if (ifap->ifa_addr->sa_family == AF_LINK && !strncmp(ifap->ifa_name, name, strlen(ifap->ifa_name))) {
+        if (ifap->ifa_addr->sa_family == AF_LINK && !strcmp(ifap->ifa_name, name)) {
             struct sockaddr_dl* sdl = (struct sockaddr_dl*) ifap->ifa_addr;
             if (sdl) {
                 memcpy(mac, LLADDR(sdl), MAC_SIZE);
-                freeifaddrs(ifaphead);
                 return 0;
             }
         }
+    }
+
+    if (ifaphead) {
+        freeifaddrs(ifaphead);
     }
 
     return 2;
