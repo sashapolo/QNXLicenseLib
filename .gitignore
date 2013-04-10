@@ -1,11 +1,8 @@
 # Momentix stuff
 .metadata
-.settings
 .project
 .cproject
-myqnx
-*o
-*o-g
+x86
 
 # Object files
 *.o
