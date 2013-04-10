@@ -1,4 +1,4 @@
 QNXLicenseLib
 =============
 
-Course project for operation systems
+Course project at SPBSTU's OS course
