@@ -10,10 +10,12 @@
 #include <sys/dcmd_cam.h>
 #include <net/if_dl.h>
 
-#define BUF_SIZE 256
-#define MAC_SIZE 6
+#include "md5.h"
 
-int getMacAddr(char* name, char* mac) {
+static const int BUF_SIZE = 256;
+static const int MAC_SIZE = 6;
+
+int getMacAddr(char* name, char mac[MAC_SIZE]) {
     struct ifaddrs* ifaphead;
     if (getifaddrs(&ifaphead) != 0) {
         return 1;
@@ -25,6 +27,7 @@ int getMacAddr(char* name, char* mac) {
             struct sockaddr_dl* sdl = (struct sockaddr_dl*) ifap->ifa_addr;
             if (sdl) {
                 memcpy(mac, LLADDR(sdl), MAC_SIZE);
+                freeifaddrs(ifaphead);
                 return 0;
             }
         }
@@ -70,6 +73,20 @@ int main(int argc, char** argv) {
         return EXIT_FAILURE;
     }
     printf("SERIAL_NUMBER is %s\n", serial);
+
+    char str[BUF_SIZE + MAC_SIZE];
+    strcpy(str, (char*) mac);
+    strcat (str, serial);
+    MD5Context context;
+    unsigned char digest[16];
+
+    md5_init(&context);
+    md5_update(&context, (unsigned char*)str, strlen(str));
+    md5_finalize(&context, digest);
+
+    printf("Open key = ");
+    md5_print_hex(digest);
+    printf("\n");
 
     return EXIT_SUCCESS;
 }
