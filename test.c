@@ -61,7 +61,7 @@ void md5sum(unsigned char digest[16], const unsigned char* string, size_t length
     md5_finalize(&context, digest);
 }
 
-int main(int argc, char** argv) {
+int generateOpenKey(unsigned char result[16]) {
     unsigned char mac[MAC_SIZE];
     char* ifaces[] = {"en0"};
     unsigned int i;
@@ -70,29 +70,37 @@ int main(int argc, char** argv) {
         err = getMacAddr(ifaces[i], (char*) mac);
         if (err == 0) break;
     }
-    if (err == 2) {
-        fprintf(stderr, "getMacAddr: No known interfaces found\n");
-        return EXIT_FAILURE;
-    } else if (err) {
-        perror("getMacAddr");
-        return EXIT_FAILURE;
+    if (err) {
+        return err;
     }
+
+    //debug
     printf("%02X%02X%02X%02X%02X%02X\n", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 
     char serial[BUF_SIZE];
     err = getHdSerial("/dev/hd0", serial, BUF_SIZE);
     if (err) {
-        perror("getHdSerial");
-        return EXIT_FAILURE;
+        return err;
     }
+
+    //debug
     printf("SERIAL_NUMBER is %s\n", serial);
 
     char str[BUF_SIZE + MAC_SIZE];
     strcpy(str, (char*) mac);
     strcat (str, serial);
-    unsigned char digest[16];
 
-    md5sum(digest, str, sizeof(str));
+    md5sum(result, (unsigned char*) str, sizeof(str));
+    return 0;
+}
+
+int main(int argc, char** argv) {
+    unsigned char digest[16];
+    int err = generateOpenKey(digest);
+    if (err) {
+        perror("generateOpenKey");
+        return EXIT_FAILURE;
+    }
 
     printf("Open key = ");
     md5_print_hex(digest);
