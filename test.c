@@ -40,7 +40,7 @@ int getMacAddr(char* name, char mac[MAC_SIZE]) {
     return 2;
 }
 
-int getHdSerialNumber(char* name, char* serial, int serialSize) {
+int getHdSerial(char* name, char* serial, int serialSize) {
     int file = open(name, O_RDONLY);
     if (!file) {
         return 1;
@@ -54,12 +54,19 @@ int getHdSerialNumber(char* name, char* serial, int serialSize) {
     return 0;
 }
 
+void md5sum(unsigned char digest[16], const unsigned char* string, size_t length) {
+    MD5Context context;
+    md5_init(&context);
+    md5_update(&context, string, length);
+    md5_finalize(&context, digest);
+}
+
 int main(int argc, char** argv) {
     unsigned char mac[MAC_SIZE];
     char* ifaces[] = {"en0"};
     unsigned int i;
     int err = 2;
-    for (i = 0; i < sizeof(ifaces); i++) {
+    for (i = 0; i < sizeof(ifaces); ++i) {
         err = getMacAddr(ifaces[i], (char*) mac);
         if (err == 0) break;
     }
@@ -73,9 +80,9 @@ int main(int argc, char** argv) {
     printf("%02X%02X%02X%02X%02X%02X\n", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 
     char serial[BUF_SIZE];
-    err = getHdSerialNumber("/dev/hd0", serial, BUF_SIZE);
+    err = getHdSerial("/dev/hd0", serial, BUF_SIZE);
     if (err) {
-        perror("getHdSerialNumber");
+        perror("getHdSerial");
         return EXIT_FAILURE;
     }
     printf("SERIAL_NUMBER is %s\n", serial);
@@ -83,12 +90,9 @@ int main(int argc, char** argv) {
     char str[BUF_SIZE + MAC_SIZE];
     strcpy(str, (char*) mac);
     strcat (str, serial);
-    MD5Context context;
     unsigned char digest[16];
 
-    md5_init(&context);
-    md5_update(&context, (unsigned char*)str, strlen(str));
-    md5_finalize(&context, digest);
+    md5sum(digest, str, sizeof(str));
 
     printf("Open key = ");
     md5_print_hex(digest);

@@ -50,9 +50,9 @@ static const uint4 S42 = 10;
 static const uint4 S43 = 15;
 static const uint4 S44 = 21;
 
-static void md5_transform(uint4[4], unsigned char[64]);
+static void md5_transform(uint4[4], const unsigned char[64]);
 static void md5_encode(unsigned char*, uint4*, unsigned int);
-static void md5_decode(uint4*, unsigned char*, unsigned int);
+static void md5_decode(uint4*, const unsigned char*, unsigned int);
 
 static unsigned char PADDING[64] = {
   0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -110,7 +110,7 @@ void md5_init(MD5Context* context) {
 // MD5 block update operation. Continues an MD5 message-digest
 // operation, processing another message block, and updating the
 // context.
-void md5_update(MD5Context* context, unsigned char* input, unsigned int len) {
+void md5_update(MD5Context* context, const unsigned char* input, unsigned int len) {
     unsigned int i, index, partLen;
 
     // Compute number of bytes mod 64
@@ -166,7 +166,7 @@ void md5_finalize(MD5Context* context, unsigned char digest[16]) {
 }
 
 // MD5 basic transformation. Transforms state based on block.
-static void md5_transform(uint4 state[4], unsigned char block[64]) {
+static void md5_transform(uint4 state[4], const unsigned char block[64]) {
     uint4 a = state[0];
     uint4 b = state[1];
     uint4 c = state[2];
@@ -270,7 +270,7 @@ static void md5_encode(unsigned char* output, uint4* input, unsigned int len) {
 
 // Decodes input (unsigned char) into output (UINT4). Assumes len is
 // a multiple of 4.
-static void md5_decode(uint4* output, unsigned char* input, unsigned int len) {
+static void md5_decode(uint4* output, const unsigned char* input, unsigned int len) {
     unsigned int i, j;
     for (i = 0, j = 0; j < len; i++, j += 4) {
         output[i] = input[j] | (input[j+1] << 8) | (input[j+2] << 16) | (input[j+3] << 24);
