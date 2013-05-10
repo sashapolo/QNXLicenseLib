@@ -56,9 +56,15 @@ int getHdSerialNumber(char* name, char* serial, int serialSize) {
 
 int main(int argc, char** argv) {
     unsigned char mac[MAC_SIZE];
-    int err = getMacAddr("en0", (char*) mac);
+    char* ifaces[] = {"en0"};
+    unsigned int i;
+    int err = 2;
+    for (i = 0; i < sizeof(ifaces); i++) {
+        err = getMacAddr(ifaces[i], (char*) mac);
+        if (err == 0) break;
+    }
     if (err == 2) {
-        fprintf(stderr, "getMacAddr: Interface not found\n");
+        fprintf(stderr, "getMacAddr: No known interfaces found\n");
         return EXIT_FAILURE;
     } else if (err) {
         perror("getMacAddr");
