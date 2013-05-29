@@ -84,7 +84,6 @@ int pll_get_check_key(char key[PLL_KEY_SIZE],
     strcpy(buf, open_key);
     strcat(buf, license);
     md5sum(key, buf, buf_size);
-    free(buf);
     return 0;
 }
 
