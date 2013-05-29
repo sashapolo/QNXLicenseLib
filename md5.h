@@ -37,11 +37,11 @@ typedef struct {
     uint4 state[4];                                   /* state (ABCD) */
     uint4 count[2];        /* number of bits, modulo 2^64 (lsb first) */
     unsigned char buffer[64];                         /* input buffer */
-} MD5Context;
+} md5_context_t;
 
-void md5_init(MD5Context*);
-void md5_update(MD5Context*, const unsigned char*, unsigned int);
-void md5_finalize(MD5Context*, unsigned char[16]);
+void md5_init(md5_context_t*);
+void md5_update(md5_context_t*, const unsigned char*, unsigned int);
+void md5_finalize(md5_context_t*, unsigned char[16]);
 void md5_print_hex(const unsigned char[16]);
 
 

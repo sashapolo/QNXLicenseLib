@@ -97,7 +97,7 @@ uint4 md5_ii(uint4 a, uint4 b, uint4 c, uint4 d, uint4 x, uint4 s, uint4 ac) {
 }
 
 // MD5 initialization. Begins an MD5 operation, writing a new context.
-void md5_init(MD5Context* context) {
+void md5_init(md5_context_t* context) {
     context->count[0] = 0;
     context->count[1] = 0;
 
@@ -110,7 +110,7 @@ void md5_init(MD5Context* context) {
 // MD5 block update operation. Continues an MD5 message-digest
 // operation, processing another message block, and updating the
 // context.
-void md5_update(MD5Context* context, const unsigned char* input, unsigned int len) {
+void md5_update(md5_context_t* context, const unsigned char* input, unsigned int len) {
     unsigned int i, index, partLen;
 
     // Compute number of bytes mod 64
@@ -144,7 +144,7 @@ void md5_update(MD5Context* context, const unsigned char* input, unsigned int le
 
 // MD5 finalization. Ends an MD5 message-digest operation, writing the
 // the message digest and zeroizing the context.
-void md5_finalize(MD5Context* context, unsigned char digest[16]) {
+void md5_finalize(md5_context_t* context, unsigned char digest[16]) {
     unsigned char bits[8];
     unsigned int index, padLen;
 
