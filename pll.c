@@ -19,11 +19,11 @@
 #include "pll.h"
 #include "md5.h"
 
-const int BUF_SIZE = 255;
+static const int BUF_SIZE = 255;
 
-void md5sum(char digest[16], const char* string, size_t len);
+void md5sum(char* digest, const char* string, size_t len);
 
-int pll_get_macaddr(char mac[6], const char* iface_name) {
+int pll_get_macaddr(char* mac, const char* iface_name) {
     struct ifaddrs* ifaphead;
     if (getifaddrs(&ifaphead) != 0) return 1;
 
@@ -53,14 +53,14 @@ int pll_get_hdserial(char* serial, size_t serial_len, const char* hd_name) {
     return 0;
 }
 
-int pll_get_open_key(char key[PLL_KEY_SIZE]) {
+int pll_get_open_key(char* key) {
     unsigned char mac[6];
     const char* ifaces[] = {"en0"};
     unsigned int i;
     int err = 2;
     for (i = 0; i < sizeof(ifaces); ++i) {
         err = pll_get_macaddr((char*) mac, ifaces[i]);
-        if (err == 0) break;
+        if (!err) break;
     }
     if (err) return err;
 
@@ -76,9 +76,8 @@ int pll_get_open_key(char key[PLL_KEY_SIZE]) {
     return 0;
 }
 
-int pll_get_check_key(char key[PLL_KEY_SIZE],
-                      const char open_key[PLL_KEY_SIZE],
-                      const char license[PLL_LICENSE_LEN]) {
+int pll_get_check_key(char* key, const char* open_key, const char* license) {
+    if (pll_parse_license(license)) return -1;
     const size_t buf_size = PLL_KEY_SIZE + PLL_LICENSE_LEN;
     char buf[buf_size];
     strcpy(buf, open_key);
@@ -87,7 +86,11 @@ int pll_get_check_key(char key[PLL_KEY_SIZE],
     return 0;
 }
 
-void md5sum(char digest[16], const char* string, size_t len) {
+int pll_parse_license(const char* license) {
+    return 0;
+}
+
+void md5sum(char* digest, const char* string, size_t len) {
     md5_context_t context;
     md5_init(&context);
     md5_update(&context, (const unsigned char*) string, len);
