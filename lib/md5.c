@@ -276,12 +276,3 @@ static void md5_decode(uint4* output, const unsigned char* input, unsigned int l
         output[i] = input[j] | (input[j+1] << 8) | (input[j+2] << 16) | (input[j+3] << 24);
     }
 }
-
-void md5_print_hex(const unsigned char digest[16]) {
-    printf("%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X\n",
-                digest[0], digest[1], digest[2], digest[3],
-                digest[4], digest[5], digest[6], digest[7],
-                digest[8], digest[9], digest[10], digest[11],
-                digest[12], digest[13], digest[14], digest[15]);
-}
-

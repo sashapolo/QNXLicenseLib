@@ -42,7 +42,5 @@ typedef struct {
 void md5_init(md5_context_t*);
 void md5_update(md5_context_t*, const unsigned char*, unsigned int);
 void md5_finalize(md5_context_t*, unsigned char[16]);
-void md5_print_hex(const unsigned char[16]);
-
 
 #endif /* MD5_H_ */

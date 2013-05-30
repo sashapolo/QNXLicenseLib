@@ -76,18 +76,20 @@ int pll_get_open_key(char* key) {
     return 0;
 }
 
-int pll_get_check_key(char* key, const char* open_key, const char* license) {
-    if (pll_parse_license(license)) return -1;
+int pll_get_check_key(char* key, const char* open_key, const char* license, size_t len) {
+    char parsed_license[len];
+    strncpy(parsed_license, license, len);
+    if (pll_parse_license(parsed_license, len)) return -1;
     const size_t buf_size = PLL_KEY_SIZE + PLL_LICENSE_LEN;
     char buf[buf_size];
     strcpy(buf, open_key);
-    strcat(buf, license);
+    strcat(buf, parsed_license);
     md5sum(key, buf, buf_size);
     return 0;
 }
 
-int pll_parse_license(const char* license) {
-    return 0;
+int pll_parse_license(char* license, size_t len) {
+    return (len != PLL_LICENSE_LEN) ? -1 : 0;
 }
 
 void md5sum(char* digest, const char* string, size_t len) {
