@@ -13,7 +13,16 @@ USEFILE=
 #===== LIBS - a space-separated list of library items to be included in the link.
 LIBS+=socket
 
+#===== CCFLAGS - add the flags to the C compiler command line. 
+CCFLAGS+=-fPIC
+
+#===== LDFLAGS - add the flags to the linker command line.
+LDFLAGS+=-shared
+
 include $(MKFILES_ROOT)/qmacros.mk
+#===== BUILDNAME - exact name (before appending suffixes like .a, .so) of build goal.
+BUILDNAME=libpll.so
+
 ifndef QNX_INTERNAL
 QNX_INTERNAL=$(PROJECT_ROOT)/.qnx_internal.mk
 endif
