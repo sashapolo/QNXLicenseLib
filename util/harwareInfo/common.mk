@@ -10,10 +10,15 @@ include $(QCONFIG)
 #===== USEFILE - the file containing the usage message for the application. 
 USEFILE=
 
-include $(MKFILES_ROOT)/qmacros.mk
+#===== LIBS - a space-separated list of library items to be included in the link.
+LIBS+=pll socket
 
+#===== EXTRA_LIBVPATH - a space-separated list of directories to search for library files.
+EXTRA_LIBVPATH+=E:/GitHub/QNXLicenseLib/util/harwareInfo
+
+include $(MKFILES_ROOT)/qmacros.mk
 #===== BUILDNAME - exact name (before appending suffixes like .a, .so) of build goal.
-BUILDNAME=libpll
+BUILDNAME=hardwareInfo.out
 
 ifndef QNX_INTERNAL
 QNX_INTERNAL=$(PROJECT_ROOT)/.qnx_internal.mk
