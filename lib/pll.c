@@ -21,54 +21,51 @@
 
 static const int BUF_SIZE = 255;
 
-void md5sum(char* digest, const char* string, size_t len);
+static void md5sum(char* digest, const char* string, size_t len);
 
 int pll_get_macaddr(char* mac, const char* iface_name) {
     struct ifaddrs* ifaphead;
-    if (getifaddrs(&ifaphead) != 0) return 1;
+    if (getifaddrs(&ifaphead) != 0) return -1;
 
     struct ifaddrs* ifap;
     for (ifap = ifaphead; ifap; ifap = ifap->ifa_next) {
-        if (ifap->ifa_addr->sa_family == AF_LINK && !strcmp(ifap->ifa_name, iface_name)) {
-            struct sockaddr_dl* sdl = (struct sockaddr_dl*) ifap->ifa_addr;
-            if (sdl) {
-                memcpy(mac, LLADDR(sdl), 6);
-                freeifaddrs(ifaphead);
-                return 0;
+        if (ifap->ifa_addr->sa_family == AF_LINK) {
+            if (iface_name == NULL || !strcmp(ifap->ifa_name, iface_name)) {
+                struct sockaddr_dl* sdl = (struct sockaddr_dl*) ifap->ifa_addr;
+                if (sdl) {
+                    memcpy(mac, LLADDR(sdl), PLL_MAC_SIZE);
+                    freeifaddrs(ifaphead);
+                    return 0;
+                }
+                break;
             }
         }
     }
 
     if (ifaphead) freeifaddrs(ifaphead);
-    return 2;
+    return -2;
 }
 
 int pll_get_hdserial(char* serial, size_t serial_len, const char* hd_name) {
     int file = open(hd_name, O_RDONLY);
-    if (!file) return 1;
+    if (!file) return -1;
 
     int err = devctl(file, DCMD_CAM_DEV_SERIAL_NUMBER, serial, serial_len, NULL);
-    if (err != EOK) return 2;
+    if (err != EOK) return -1;
 
     return 0;
 }
 
 int pll_get_open_key(char* key) {
-    unsigned char mac[6];
-    const char* ifaces[] = {"en0"};
-    unsigned int i;
-    int err = 2;
-    for (i = 0; i < sizeof(ifaces); ++i) {
-        err = pll_get_macaddr((char*) mac, ifaces[i]);
-        if (!err) break;
-    }
-    if (err) return err;
+    unsigned char mac[PLL_MAC_SIZE];
+    int err = pll_get_macaddr((char*) mac, NULL);
+    if (err) return -1;
 
     char serial[BUF_SIZE];
     err = pll_get_hdserial(serial, BUF_SIZE, "/dev/hd0");
-    if (err) return err;
+    if (err) return -1;
 
-    char str[BUF_SIZE + 6];
+    char str[BUF_SIZE + PLL_MAC_SIZE];
     strcpy(str, (char*) mac);
     strcat(str, serial);
 
@@ -88,7 +85,7 @@ int pll_get_check_key(char* key, const char* open_key, const char* license, size
     return 0;
 }
 
-int pll_parse_license(char* license, size_t len) {
+int pll_parse_license(const char* license, size_t len) {
     return (len != PLL_LICENSE_LEN) ? -1 : 0;
 }
 

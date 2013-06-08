@@ -18,8 +18,9 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
     char key[PLL_KEY_SIZE];
+    bzero(key, PLL_KEY_SIZE);
     int err = pll_get_open_key(key);
-    if (err) {
+    if (err == -1) {
         perror("pll_get_open_key");
         return EXIT_FAILURE;
     }

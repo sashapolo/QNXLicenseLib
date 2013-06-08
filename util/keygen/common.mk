@@ -14,7 +14,7 @@ USEFILE=
 LIBS+=pll socket
 
 #===== EXTRA_LIBVPATH - a space-separated list of directories to search for library files.
-EXTRA_LIBVPATH+=$(PROJECT_ROOT_pll)/$(CPU)/$(patsubst o%,a%,$(notdir $(CURDIR)))
+EXTRA_LIBVPATH+=E:/GitHub/QNXLicenseLib/lib/x86/a
 
 include $(MKFILES_ROOT)/qmacros.mk
 

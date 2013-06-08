@@ -13,7 +13,8 @@ int main(int argc, char *argv[]) {
         unsigned char mac[6];
         int err = pll_get_macaddr((char*) mac, argv[2]);
         if (err) {
-            perror("pll_get_macaddr");
+            if (err == -2) fprintf(stderr, "pll_get_macaddr: interface not found\n");
+            else perror("pll_get_macaddr");
             return EXIT_FAILURE;
         }
         printf("%02X:%02X:%02X:%02X:%02X:%02X\n", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
@@ -24,7 +25,7 @@ int main(int argc, char *argv[]) {
             perror("pll_get_hdserial");
             return EXIT_FAILURE;
         }
-        printf("%s", serial);
+        printf("%s\n", serial);
     } else {
         printf("Error: unknown flag %s\n", argv[1]);
         return EXIT_FAILURE;

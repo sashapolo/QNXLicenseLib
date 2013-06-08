@@ -8,9 +8,11 @@
 #ifndef PLL_H_
 #define PLL_H_
 
-#include <stdlib.h>
-
+// size of MAC address
+#define PLL_MAC_SIZE 6
+// size of open and check keys
 #define PLL_KEY_SIZE 16
+// size of license string
 #define PLL_LICENSE_LEN 16
 
 /*

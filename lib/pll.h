@@ -8,9 +8,11 @@
 #ifndef PLL_H_
 #define PLL_H_
 
-#include <stdlib.h>
-
+// size of MAC address
+#define PLL_MAC_SIZE 6
+// size of open and check keys
 #define PLL_KEY_SIZE 16
+// size of license string
 #define PLL_LICENSE_LEN 16
 
 /*
@@ -49,6 +51,6 @@ int pll_get_check_key(char* key, const char* open_key, const char* license, size
 /*
  * checks whether given license key matches the assumed pattern.
  */
-int pll_parse_license(char* license, size_t len);
+int pll_parse_license(const char* license, size_t len);
 
 #endif /* PLL_H_ */

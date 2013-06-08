@@ -14,9 +14,10 @@ USEFILE=
 LIBS+=pll socket
 
 #===== EXTRA_LIBVPATH - a space-separated list of directories to search for library files.
-EXTRA_LIBVPATH+=E:/GitHub/QNXLicenseLib/util/harwareInfo
+EXTRA_LIBVPATH+=E:/GitHub/QNXLicenseLib/lib/x86/a
 
 include $(MKFILES_ROOT)/qmacros.mk
+
 #===== BUILDNAME - exact name (before appending suffixes like .a, .so) of build goal.
 BUILDNAME=hardwareInfo.out
 
