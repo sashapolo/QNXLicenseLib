@@ -1,9 +1,16 @@
-/*
- * md5.h
+/*!
+ * @file
+ * @ingroup md5
+ * @author  Александр Половцев (sasha_polo@mail.ru)
+ * @date    25.04.2013 <BR>
+ * @brief   Заголовочный файл с прототипами функций для подсчета хэша md5.
  *
- *  Created on: 25.04.2013
- *      Author: Alexander
+ * @detail Реализация взята из RFC 1321 с небольшими модификациями, чтобы
+ * соответствовать общему стилю библиотеки.
+ *
+ * @see http://www.ietf.org/rfc/rfc1321.txt
  */
+
 
 /* Copyright (C) 1991-2, RSA Data Security, Inc. Created 1991. All
    rights reserved.
@@ -30,7 +37,7 @@
 #ifndef MD5_H_
 #define MD5_H_
 
-typedef unsigned int uint4;  // 32bit
+typedef unsigned int uint4;
 
 /* MD5 context. */
 typedef struct {

@@ -1,55 +1,116 @@
-/*
- * pll.h
+/*!
+ * @file
+ * @ingroup pll
+ * @author  Александр Половцев (sasha_polo@mail.ru)
+ * @date    30.05.2013 <BR>
+ * @brief   Заголовочный файл, описывающий интерфейс библиотеки.
  *
- *  Created on: 30.05.2013
- *      Author: Alexander
+ * @detail Данный файл описывает функции, реализующие функциональность,
+ * заданную в техническом задании.
  */
 
 #ifndef PLL_H_
 #define PLL_H_
 
-// size of MAC address
+/*!
+ * @brief  Размер буфера для MAC-адреса
+ */
 #define PLL_MAC_SIZE 6
-// size of open and check keys
+/*!
+ * @brief Размер открытого и проверочного ключей
+ */
 #define PLL_KEY_SIZE 16
-// size of license string
+/*!
+ * @brief Количество символов в лицензии
+ */
 #define PLL_LICENSE_LEN 16
 
-/*
- * returns MAC address of given interface
- * input: network interface name (NULL-terminated string)
- * output: MAC address
- * returns: zero on success, non-zero on failure and ERRNO is set appropriately
+//! Функция для получения MAC-адреса
+/*!
+ * @ingroup pll
+ *
+ * @detail Функция, возвращающая MAC-адрес переданного интерфейса. Если
+ * @p iface_name равен @c NULL, то функция вернет адрес первого интерфейса из списка
+ * интерфейсов (удобно при генерации открытого ключа).
+ *
+ * @param [out] mac MAC-адрес
+ * @param [in] iface_name имя интерфейса (или NULL)
+ *
+ * @retval 0 в случае успеха
+ * @retval -2 если интерфейс не найден
+ * @retval -1 в остальных случаях (при этом устанавливается переменная ERRNO)
  */
 int pll_get_macaddr(char* mac, const char* iface_name);
 
-/*
- * returns hard drive serial number
- * input: hard drive interface name (NULL-terminated string)
- * output: HD serial
- * returns: zero on success, non-zero on failure and ERRNO is set appropriately
+//! Функция для получения серийного номера жесткого диска
+/*!
+ * @ingroup pll
+ *
+ * @param [out] serial серийный номер
+ * @param [in] serial_len длина буфера @p serial, куда будет записан серийный номер
+ * @param [in] hd_name путь к файлу жесткого диска
+ *
+ * @retval 0 в случае успеха
+ * @retval -1 в остальных случаях (при этом устанавливается переменная ERRNO)
+ *
+ * Пример использования:
+ * @code
+ *     char serial[256];
+ *     int err = pll_get_hdserial(serial, 256, "/dev/hd0");
+ *     if (err) {
+ *         perror("pll_get_hdserial");
+ *         return EXIT_FAILURE;
+ *     }
+ *     printf("%s\n", serial);
+ * @endcode
  */
 int pll_get_hdserial(char* serial, size_t serial_len, const char* hd_name);
 
-/*
- * returns open key, based on hardware info. Assumes that key length is PLL_KEY_SIZE.
- * input:
- * output: open key
- * returns: zero on success, non-zero on failure and ERRNO is set appropriately
+//! Функция для получения открытого ключа
+/*!
+ * @ingroup pll
+ *
+ * Функция, которая возвращает открытый ключ, основанный на информации
+ * об аппаратных характеристиках компьютера. Предполагается, что размер буфера
+ * @p key равен @c PLL_KEY_SIZE, иначе поведение функции не определено.
+ *
+ * @param [out] key открытый ключ
+ *
+ * @retval 0 в случае успеха
+ * @retval -1 в остальных случаях (при этом устанавливается переменная ERRNO)
  */
 int pll_get_open_key(char* key);
 
-/*
- * returns check key, based on open key and license string.
- * Assumes key length is PLL_KEY_SIZE.
- * input: open key, license key
- * output: check key
- * returns: zero on success, -1 if license format is incorrect
+//! Функция для получения проверочного ключа
+/*!
+ * @ingroup pll
+ *
+ * Функция, которая возвращает проверочный ключ, основанный открытом ключе и лицензионном ключе.
+ * Предполагается, что размер @p key и @p open_key равен @c PLL_KEY_SIZE,
+ * иначе поведение функции не определено.
+ *
+ * @param [out] key проверочный ключ
+ * @param [in] open_key открытый ключ
+ * @param [in] license лицензионный ключ
+ * @param [in] len размер лицензионного ключа
+ *
+ * @retval 0 в случае успеха
+ * @retval -1 в остальных случаях (при этом устанавливается переменная ERRNO)
  */
-int pll_get_check_key(char* key, const char* open_key, const char* license, size_t len);
+int pll_get_check_key(char* key,
+                      const char* open_key,
+                      const char* license,
+                      size_t len);
 
-/*
- * checks whether given license key matches the assumed pattern.
+//! Функция для проверки соответствия лицензионного ключа определенному формату
+/*!
+ * @ingroup pll
+ *
+ * @param [in] license лицензионный ключ
+ * @param [in] len размер лицензионного ключа
+ *
+ * @retval 0 если ключ соответствует формату
+ * @retval -1 в противном случае
  */
 int pll_parse_license(const char* license, size_t len);
 

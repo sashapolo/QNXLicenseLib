@@ -20,3 +20,7 @@
 *.exe
 *.out
 *.app
+
+# Documentation
+doc/*
+!doc/Doxyfile

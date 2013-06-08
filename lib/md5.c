@@ -1,8 +1,9 @@
-/*
- * md5.c
- *
- *  Created on: 25.04.2013
- *      Author: Alexander
+/*!
+ * @file
+ * @ingroup md5
+ * @author  Александр Половцев (sasha_polo@mail.ru)
+ * @date    25.04.2013
+ * @brief   Реализация функций из md5.h
  */
 
 /* Copyright (C) 1991-2, RSA Data Security, Inc. Created 1991. All
@@ -33,28 +34,28 @@
 #include "md5.h"
 
 // Constants for MD5Transform routine.
-static const uint4 S11 = 7;
-static const uint4 S12 = 12;
-static const uint4 S13 = 17;
-static const uint4 S14 = 22;
-static const uint4 S21 = 5;
-static const uint4 S22 = 9;
-static const uint4 S23 = 14;
-static const uint4 S24 = 20;
-static const uint4 S31 = 4;
-static const uint4 S32 = 11;
-static const uint4 S33 = 16;
-static const uint4 S34 = 23;
-static const uint4 S41 = 6;
-static const uint4 S42 = 10;
-static const uint4 S43 = 15;
-static const uint4 S44 = 21;
+const uint4 S11 = 7;
+const uint4 S12 = 12;
+const uint4 S13 = 17;
+const uint4 S14 = 22;
+const uint4 S21 = 5;
+const uint4 S22 = 9;
+const uint4 S23 = 14;
+const uint4 S24 = 20;
+const uint4 S31 = 4;
+const uint4 S32 = 11;
+const uint4 S33 = 16;
+const uint4 S34 = 23;
+const uint4 S41 = 6;
+const uint4 S42 = 10;
+const uint4 S43 = 15;
+const uint4 S44 = 21;
 
-static void md5_transform(uint4[4], const unsigned char[64]);
-static void md5_encode(unsigned char*, uint4*, unsigned int);
-static void md5_decode(uint4*, const unsigned char*, unsigned int);
+void md5_transform(uint4[4], const unsigned char[64]);
+void md5_encode(unsigned char*, uint4*, unsigned int);
+void md5_decode(uint4*, const unsigned char*, unsigned int);
 
-static unsigned char PADDING[64] = {
+unsigned char PADDING[64] = {
   0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0

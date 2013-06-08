@@ -1,8 +1,9 @@
-/*
- * pll.c
- *
- *  Created on: 30.05.2013
- *      Author: Alexander
+/*!
+ * @file
+ * @ingroup pll
+ * @author  Александр Половцев (sasha_polo@mail.ru)
+ * @date    30.05.2013 <BR>
+ * @brief   Реализация функций из pll.h.
  */
 
 #include <stdio.h>
@@ -19,9 +20,12 @@
 #include "pll.h"
 #include "md5.h"
 
-static const int BUF_SIZE = 255;
+/*!
+ * @brief константа для хранения размера буферов, которые используются в различных функциях
+ */
+const int BUF_SIZE = 255;
 
-static void md5sum(char* digest, const char* string, size_t len);
+void md5sum(char* digest, const char* string, size_t len);
 
 int pll_get_macaddr(char* mac, const char* iface_name) {
     struct ifaddrs* ifaphead;
@@ -89,6 +93,13 @@ int pll_parse_license(const char* license, size_t len) {
     return (len != PLL_LICENSE_LEN) ? -1 : 0;
 }
 
+/*!
+ * @brief Функция для подсчета md5 хэша от строки
+ *
+ * @param [out] digest хэш md5
+ * @param [in] string строка
+ * @param [in] len длина строки
+ */
 void md5sum(char* digest, const char* string, size_t len) {
     md5_context_t context;
     md5_init(&context);
