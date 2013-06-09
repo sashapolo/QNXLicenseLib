@@ -1,9 +1,26 @@
+//! Утилита для получения проверочного ключа
+/*!
+ * @file
+ * @author  Александр Половцев (sasha_polo@mail.ru)
+ * @date    31.05.2013
+ *
+ * Утилите в качестве входных параметров передается строка с лицензионным ключом.
+ * На данный момент формат лицензионного ключа - 16 символов без разделитилей
+ * Например:
+ * @code
+ *     keygen.out AAAAAAAAAAAAAAAA
+ * @endcode
+ */
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
 #include "pll.h"
 
+//! Функция, для вывода хэша md5 в шестнадцатеричном формате.
+/*!
+ * @param digest строка, содержащая хэш md5.
+ */
 void print_hex(const unsigned char* digest) {
     printf("%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X\n",
                 digest[0], digest[1], digest[2], digest[3],
@@ -12,6 +29,17 @@ void print_hex(const unsigned char* digest) {
                 digest[12], digest[13], digest[14], digest[15]);
 }
 
+//! Функция, содержащая код утилиты
+/*!
+ * Алгоритм работы:
+ * 1. Парсинг входных параметров.
+ * 2. Получение открытого ключа.
+ * 3. Получение проверочного ключа.
+ * 3. Вывод результата на экран.
+ *
+ * @retval 0 в случае успеха
+ * @retval не-0 в остальных случаях
+ */
 int main(int argc, char *argv[]) {
     if (argc != 2) {
         fprintf(stderr, "Usage: keygen <license key>\n");

@@ -1,6 +1,5 @@
 /*!
  * @file
- * @ingroup md5
  * @author  Александр Половцев (sasha_polo@mail.ru)
  * @date    25.04.2013
  * @brief   Реализация функций из md5.h
@@ -33,7 +32,10 @@
 
 #include "md5.h"
 
-// Constants for MD5Transform routine.
+/*!
+ * @name Константы для функции md5_transform
+ */
+/**@{*/
 const uint4 S11 = 7;
 const uint4 S12 = 12;
 const uint4 S13 = 17;
@@ -50,10 +52,11 @@ const uint4 S41 = 6;
 const uint4 S42 = 10;
 const uint4 S43 = 15;
 const uint4 S44 = 21;
+/**@}*/
 
-void md5_transform(uint4[4], const unsigned char[64]);
-void md5_encode(unsigned char*, uint4*, unsigned int);
-void md5_decode(uint4*, const unsigned char*, unsigned int);
+static void md5_transform(uint4[4], const unsigned char[64]);
+static void md5_encode(unsigned char*, const uint4*, size_t);
+static void md5_decode(uint4*, const unsigned char*, size_t);
 
 unsigned char PADDING[64] = {
   0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -61,6 +64,10 @@ unsigned char PADDING[64] = {
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
+/*!
+ * @name Вспомогательные функции для трансформации
+ */
+/**@{*/
 uint4 md5_f(uint4 x, uint4 y, uint4 z) {
     return (x & y) | (~x & z);
 }
@@ -96,8 +103,8 @@ uint4 md5_hh(uint4 a, uint4 b, uint4 c, uint4 d, uint4 x, uint4 s, uint4 ac) {
 uint4 md5_ii(uint4 a, uint4 b, uint4 c, uint4 d, uint4 x, uint4 s, uint4 ac) {
     return md5_rotate_left(a + md5_i(b, c, d) + x + ac, s) + b;
 }
+/**@}*/
 
-// MD5 initialization. Begins an MD5 operation, writing a new context.
 void md5_init(md5_context_t* context) {
     context->count[0] = 0;
     context->count[1] = 0;
@@ -108,9 +115,6 @@ void md5_init(md5_context_t* context) {
     context->state[3] = 0x10325476;
 }
 
-// MD5 block update operation. Continues an MD5 message-digest
-// operation, processing another message block, and updating the
-// context.
 void md5_update(md5_context_t* context, const unsigned char* input, unsigned int len) {
     unsigned int i, index, partLen;
 
@@ -143,8 +147,6 @@ void md5_update(md5_context_t* context, const unsigned char* input, unsigned int
     memcpy(&context->buffer[index], &input[i], len - i);
 }
 
-// MD5 finalization. Ends an MD5 message-digest operation, writing the
-// the message digest and zeroizing the context.
 void md5_finalize(md5_context_t* context, unsigned char digest[16]) {
     unsigned char bits[8];
     unsigned int index, padLen;
@@ -166,7 +168,13 @@ void md5_finalize(md5_context_t* context, unsigned char digest[16]) {
     bzero(context, sizeof(*context));
 }
 
-// MD5 basic transformation. Transforms state based on block.
+//! Основная md5-трансформация.
+/*!
+ * Функция преоразует состояние в зависимости от блока сообщения.
+ *
+ * @param [out] state текущее состояние
+ * @param [in] block блок сообщения
+ */
 static void md5_transform(uint4 state[4], const unsigned char block[64]) {
     uint4 a = state[0];
     uint4 b = state[1];
@@ -257,9 +265,13 @@ static void md5_transform(uint4 state[4], const unsigned char block[64]) {
     bzero(x, sizeof(x));
 }
 
-// Encodes input (UINT4) into output (unsigned char). Assumes len is
-// a multiple of 4.
-static void md5_encode(unsigned char* output, uint4* input, unsigned int len) {
+//! Кодирование @p input (uint4) в @p ouput (unsigned char).
+/*!
+ * @param [out] output
+ * @param [in] input
+ * @param [in] len размер @p output и @p input. Должен быть кратен 4
+ */
+static void md5_encode(unsigned char* output, const uint4* input, size_t len) {
     unsigned int i, j;
     for (i = 0, j = 0; j < len; i++, j += 4) {
         output[j] = input[i] & 0xff;
@@ -269,9 +281,13 @@ static void md5_encode(unsigned char* output, uint4* input, unsigned int len) {
     }
 }
 
-// Decodes input (unsigned char) into output (UINT4). Assumes len is
-// a multiple of 4.
-static void md5_decode(uint4* output, const unsigned char* input, unsigned int len) {
+//! Декодирование @p input (unsigned char) в @p ouput (unit4).
+/*!
+ * @param [out] output
+ * @param [in] input
+ * @param [in] len размер @p output и @p input. Должен быть кратен 4
+ */
+static void md5_decode(uint4* output, const unsigned char* input, size_t len) {
     unsigned int i, j;
     for (i = 0, j = 0; j < len; i++, j += 4) {
         output[i] = input[j] | (input[j+1] << 8) | (input[j+2] << 16) | (input[j+3] << 24);

@@ -1,9 +1,35 @@
+//! Утилита для получения MAC-адреса и серийного номера жесткого диска
+/*!
+ * @file
+ * @author  Александр Половцев (sasha_polo@mail.ru)
+ * @date    31.05.2013
+ *
+ * Утилите в качестве входных параметров передается флаг (получение MAC-адреса или
+ * серийного номера) и имя соответствующего интерфейса.
+ * Например:
+ * @code
+ *     hardwareInfo.out -mac rt0
+ *     hardwareInfo.out -hd /dev/hd0
+ * @endcode
+ */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
 #include "pll.h"
 
+//! Функция, содержащая код утилиты
+/*!
+ * Алгоритм работы:
+ * 1. Парсинг входных параметров.
+ * 2. В зависимости от флага - вызов соответствующей функции (@c pll_get_macaddr
+ * или @c pll_get_hdserial).
+ * 3. Вывод результата на экран.
+ *
+ * @retval 0 в случае успеха
+ * @retval не-0 в остальных случаях
+ */
 int main(int argc, char *argv[]) {
 	if (argc != 3) {
 	    fprintf(stderr, "Usage: hardwareinfo <flags> <iface name>\n");

@@ -1,8 +1,7 @@
 /*!
  * @file
- * @ingroup pll
  * @author  Александр Половцев (sasha_polo@mail.ru)
- * @date    30.05.2013 <BR>
+ * @date    30.05.2013
  * @brief   Реализация функций из pll.h.
  */
 
@@ -20,13 +19,17 @@
 #include "pll.h"
 #include "md5.h"
 
-/*!
- * @brief константа для хранения размера буферов, которые используются в различных функциях
- */
+//! константа для хранения размера буферов, которые используются в различных функциях
 const int BUF_SIZE = 255;
 
 void md5sum(char* digest, const char* string, size_t len);
 
+/*!
+ * Алгоритм работы:
+ * 1. Получение списка структур ifaddrs
+ * 2. Сравнение имени структуры и @p iface_name (если не NULL)
+ * 3. Если интерфейс найден - копирование MAC-адреса в @p mac
+ */
 int pll_get_macaddr(char* mac, const char* iface_name) {
     struct ifaddrs* ifaphead;
     if (getifaddrs(&ifaphead) != 0) return -1;
@@ -50,6 +53,12 @@ int pll_get_macaddr(char* mac, const char* iface_name) {
     return -2;
 }
 
+/*!
+ * Алгоритм работы:
+ * 1. Получение дескриптора файла жесткого диска
+ * 2. Получение серийного номера при помощи @c devctl и его запись в @p serial
+ * 3. Если интерфейс найден - копирование MAC-адреса в @p mac
+ */
 int pll_get_hdserial(char* serial, size_t serial_len, const char* hd_name) {
     int file = open(hd_name, O_RDONLY);
     if (!file) return -1;
@@ -60,6 +69,13 @@ int pll_get_hdserial(char* serial, size_t serial_len, const char* hd_name) {
     return 0;
 }
 
+/*!
+ * Алгоритм работы:
+ * 1. Получение MAC-адреса одного из сетевых интерфейсов
+ * 2. Получение серийного номера жесткого диска
+ * 3. Конкатенация результата в одну строку
+ * 4. Подсчет хэша md5
+ */
 int pll_get_open_key(char* key) {
     unsigned char mac[PLL_MAC_SIZE];
     int err = pll_get_macaddr((char*) mac, NULL);
@@ -77,6 +93,13 @@ int pll_get_open_key(char* key) {
     return 0;
 }
 
+/*!
+ * Алгоритм работы:
+ * 1. Проверка формата лицензии
+ * 2. Получение открытого ключа
+ * 3. Конкатенация результата в одну строку
+ * 4. Подсчет хэша md5
+ */
 int pll_get_check_key(char* key, const char* open_key, const char* license, size_t len) {
     char parsed_license[len];
     strncpy(parsed_license, license, len);
@@ -89,13 +112,16 @@ int pll_get_check_key(char* key, const char* open_key, const char* license, size
     return 0;
 }
 
+/*!
+ * На данный момент функция проверяет только длину лицензионного ключа.
+ * В дальнейшем ее можно изменить при смене формата.
+ */
 int pll_parse_license(const char* license, size_t len) {
     return (len != PLL_LICENSE_LEN) ? -1 : 0;
 }
 
+//! Функция для подсчета md5 хэша от строки
 /*!
- * @brief Функция для подсчета md5 хэша от строки
- *
  * @param [out] digest хэш md5
  * @param [in] string строка
  * @param [in] len длина строки
