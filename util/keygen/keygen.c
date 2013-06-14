@@ -4,11 +4,12 @@
  * @author  Александр Половцев (sasha_polo@mail.ru)
  * @date    31.05.2013
  *
- * Утилите в качестве входных параметров передается строка с лицензионным ключом.
+ * Утилите в качестве входных параметров передается флаг и строка с лицензионным ключом.
  * На данный момент формат лицензионного ключа - 16 символов без разделитилей
  * Например:
  * @code
- *     keygen.out AAAAAAAAAAAAAAAA
+ *     keygen.out -open
+ *     keygen.out -check AAAAAAAAAAAAAAAA
  * @endcode
  */
 #include <stdlib.h>
@@ -33,34 +34,42 @@ void print_hex(const unsigned char* digest) {
 /*!
  * Алгоритм работы:
  * 1. Парсинг входных параметров.
- * 2. Получение открытого ключа.
- * 3. Получение проверочного ключа.
+ * 2. В зависимости от флага - получение открытого или проверочного ключа.
  * 3. Вывод результата на экран.
  *
- * @retval 0 в случае успеха
- * @retval не-0 в остальных случаях
+ * @retval EXIT_SUCCESS в случае успеха
+ * @retval EXIT_FAILURE в остальных случаях
  */
 int main(int argc, char *argv[]) {
-    if (argc != 2) {
-        fprintf(stderr, "Usage: keygen <license key>\n");
+    if (argc < 2 || argc > 3) {
+        fprintf(stderr, "Usage: keygen <flag> [license key]\n");
         return EXIT_FAILURE;
     }
+
     char key[PLL_KEY_SIZE];
-    bzero(key, PLL_KEY_SIZE);
     int err = pll_get_open_key(key);
     if (err == -1) {
         perror("pll_get_open_key");
         return EXIT_FAILURE;
     }
-
-    err = pll_get_check_key(key, key, argv[1], strlen(argv[1]));
-    if (err) {
-        fprintf(stderr, "Invalid license key format\n");
+    if (!strncmp(argv[1], "-open", 6)) {
+        print_hex((unsigned char*) key);
+        fputc('\n', stdout);
+    } else if (!strncmp(argv[1], "-check", 7)) {
+        if (argc != 3) {
+            fprintf(stderr, "Usage: keygen <flag> [license key]\n");
+            return EXIT_FAILURE;
+        }
+        err = pll_get_check_key(key, key, argv[2], strlen(argv[2]));
+        if (err) {
+            fprintf(stderr, "Invalid license key format\n");
+            return EXIT_FAILURE;
+        }
+        print_hex((unsigned char*) key);
+        fputc('\n', stdout);
+    } else {
+        fprintf(stderr, "Error: unknown flag %s\n", argv[1]);
         return EXIT_FAILURE;
     }
-
-    print_hex((unsigned char*) key);
-    printf("\n");
-
     return EXIT_SUCCESS;
 }
